@@ -1,0 +1,14 @@
+{
+  "id": "zombie-expansion",
+  "name": "Zombie Expansion",
+  "version": "1.0.0",
+  "author": "Roud",
+  "description": "Añade zombis que persiguen al jugador en oleadas, con barra de vida, HUD y sonido. Ejemplo de mod completo para Pitch.",
+  "main": "main.js",
+  "pitchApi": "1.0",
+  "category": "content",
+  "dependencies": {},
+  "permissions": ["game", "graphics", "audio", "storage", "ui"],
+  "compatibility": { "games": ["*"], "runtimes": ["scratch-vm"] },
+  "modifies": []
+}

@@ -1,0 +1,30 @@
+{
+  "name": "Juegos de Roud",
+  "games": [
+    {
+      "repo": "tu-usuario/space-cat",
+      "title": "Space Cat",
+      "author": "Roud",
+      "description": "Un gato astronauta esquiva cometas por el sistema solar.",
+      "tags": ["arcade", "espacio"],
+      "cover": "https://raw.githubusercontent.com/tu-usuario/space-cat/main/cover.png"
+    },
+    {
+      "repo": "tu-usuario/lava-run",
+      "title": "Lava Run",
+      "description": "Corre sobre la lava sin caerte.",
+      "tags": ["plataformas"],
+      "channel": "prerelease"
+    },
+    {
+      "repo": "tu-usuario/tiny-farm",
+      "title": "Tiny Farm",
+      "description": "Una granja diminuta para relajarte.",
+      "assets": {
+        "windows": "^TinyFarm_win.*\\.zip$",
+        "mac": "^TinyFarm_mac.*\\.zip$",
+        "linux": "^TinyFarm_linux.*\\.zip$"
+      }
+    }
+  ]
+}
