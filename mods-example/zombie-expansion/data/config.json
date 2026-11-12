@@ -1,0 +1,9 @@
+{
+  "playerSprite": "Sprite1",
+  "healthVariable": "score",
+  "startHealth": 100,
+  "contactDamage": 5,
+  "zombiesPerWave": 3,
+  "zombieSpeed": 0.8,
+  "zombieHealth": 50
+}

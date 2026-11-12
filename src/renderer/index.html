@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' https: data:; style-src 'self'; font-src 'self'; script-src 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pitch</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <button id="btn-logo" class="logo-btn" type="button" aria-label="Pitch, ir al inicio">
+        <img src="assets/logo-full.png" alt="Pitch">
+      </button>
+
+      <nav class="nav" aria-label="Secciones">
+        <button type="button" data-nav="home">Inicio</button>
+        <button type="button" data-nav="library">Biblioteca</button>
+        <button type="button" data-nav="admin" hidden>Administración</button>
+      </nav>
+
+      <div class="tools">
+        <label class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg>
+          <input id="search" type="search" placeholder="Buscar juegos" aria-label="Buscar juegos" autocomplete="off" spellcheck="false">
+        </label>
+        <button id="btn-discord-panel" class="icon-btn filled" type="button" aria-label="Discord" aria-pressed="false" title="Abrir Discord en el panel lateral"></button>
+        <button id="btn-call" class="icon-btn" type="button" aria-label="Llamada de Discord" title="Llamada de Discord"></button>
+        <button id="btn-refresh" class="icon-btn" type="button" aria-label="Buscar actualizaciones" title="Buscar actualizaciones">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 1 1-2.5-6"/><path d="M20 4v5h-5"/></svg>
+        </button>
+        <button id="btn-theme" class="icon-btn" type="button"></button>
+        <button id="btn-settings" class="icon-btn" type="button" aria-label="Ajustes" title="Ajustes">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="page" class="page" tabindex="-1"></main>
+  </div>
+
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+
+  <dialog id="dlg-settings" aria-labelledby="dlg-settings-title">
+    <form id="form-settings" method="dialog" novalidate>
+      <h2 id="dlg-settings-title">Ajustes</h2>
+
+      <div class="field">
+        <span class="label">Tema</span>
+        <div class="segmented" role="group" aria-label="Tema">
+          <button type="button" data-theme-choice="light"><i class="swatch swatch-light"></i>Azul y blanco</button>
+          <button type="button" data-theme-choice="dark"><i class="swatch swatch-dark"></i>Azul y negro</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="set-catalog">Catálogo de juegos</label>
+        <input id="set-catalog" type="text" placeholder="usuario/repositorio" autocomplete="off" spellcheck="false">
+        <p class="hint">El repositorio de GitHub que contiene el catalog.json de la tienda. También vale usuario/repositorio@rama o un enlace https.</p>
+      </div>
+
+      <div class="field">
+        <label for="set-token">Token de GitHub (opcional)</label>
+        <input id="set-token" type="password" autocomplete="off" spellcheck="false">
+        <p class="hint" id="token-hint">Sube el límite de consultas y permite repositorios privados. Si el token tiene permiso de escritura en el catálogo, aparece el panel de administración. Se guarda cifrado en este equipo.</p>
+        <button id="btn-clear-token" class="link-btn" type="button" hidden>Quitar el token guardado</button>
+      </div>
+
+      <div class="field inline">
+        <input id="set-auto" type="checkbox">
+        <label for="set-auto">Actualizar los juegos automáticamente</label>
+      </div>
+
+      <div class="field">
+        <label for="set-interval">Buscar actualizaciones cada</label>
+        <select id="set-interval">
+          <option value="15">15 minutos</option>
+          <option value="30">30 minutos</option>
+          <option value="60">1 hora</option>
+          <option value="180">3 horas</option>
+          <option value="720">12 horas</option>
+        </select>
+      </div>
+
+      <div class="field inline" id="row-sandbox" hidden>
+        <input id="set-sandbox" type="checkbox">
+        <label for="set-sandbox">Abrir los juegos Electron sin sandbox (necesario en algunas distribuciones de Linux)</label>
+      </div>
+
+      <p id="settings-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button class="ghost" type="button" data-close>Cancelar</button>
+        <button class="solid" type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-game" aria-labelledby="dlg-game-title">
+    <form id="form-game" method="dialog" novalidate>
+      <h2 id="dlg-game-title">Añadir un juego</h2>
+
+      <div class="field">
+        <label for="g-repo">Repositorio del juego</label>
+        <div class="with-button">
+          <input id="g-repo" type="text" placeholder="usuario/mi-juego" autocomplete="off" spellcheck="false">
+          <button id="g-lookup" class="ghost" type="button">Rellenar desde GitHub</button>
+        </div>
+        <p class="hint">Pitch usará la última Release de ese repositorio.</p>
+      </div>
+      <div class="field two">
+        <div><label for="g-title">Título</label><input id="g-title" type="text" autocomplete="off"></div>
+        <div><label for="g-author">Autor</label><input id="g-author" type="text" autocomplete="off"></div>
+      </div>
+      <div class="field">
+        <label for="g-desc">Descripción</label>
+        <textarea id="g-desc" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label for="g-tags">Etiquetas</label>
+        <input id="g-tags" type="text" placeholder="arcade, espacio" autocomplete="off">
+        <p class="hint">Separadas por comas. Con dos o más juegos en la misma etiqueta aparece una fila propia en la portada.</p>
+      </div>
+      <div class="field two">
+        <div><label for="g-cover">Carátula (enlace https)</label><input id="g-cover" type="text" placeholder="https://…" autocomplete="off" spellcheck="false"></div>
+        <div><label for="g-banner">Banner grande (enlace https)</label><input id="g-banner" type="text" placeholder="https://…" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <div class="field two">
+        <div class="inline"><input id="g-featured" type="checkbox"><label for="g-featured">Destacado en la portada</label></div>
+        <div>
+          <label for="g-channel">Versiones</label>
+          <select id="g-channel"><option value="stable">Solo versiones estables</option><option value="prerelease">Incluir pre-releases</option></select>
+        </div>
+      </div>
+
+      <p id="game-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button class="ghost" type="button" data-close>Cancelar</button>
+        <button class="solid" type="submit">Guardar juego</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-confirm" aria-label="Confirmación"></dialog>
+
+  <script src="app.js"></script>
+  <script src="mods-ui.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
