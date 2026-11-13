@@ -612,7 +612,7 @@ function updateSection() {
       break;
     case 'available':
       line = `Hay una versión nueva: Pitch ${u.newVersion}.`;
-      button = h('button', { class: 'solid', type: 'button', text: 'Descargar', onclick: () => run(api.openExternal(u.releasesUrl)) });
+      button = h('button', { class: 'solid', type: 'button', text: 'Descargar', onclick: () => run(api.openExternal(u.releasesUrl || 'https://github.com/planeador4000-design/pitch/releases/latest')) });
       break;
     case 'error':
       line = `No se pudo comprobar: ${u.error}`;

@@ -19,7 +19,7 @@ const { showLoadingSplash } = require('./splash');
 const { ModStore } = require('./mods/store');
 const { ModService } = require('./mods/service');
 const { DiscordPanel } = require('./discord-panel');
-const { Updater } = require('./updater');
+const { Updater, releasesUrlFromPackage } = require('./updater');
 
 // pitch.config.json ships with the app: put your catalog repo there ("usuario/pitch-catalog")
 // and a Discord application's id there (see README) and every user gets your store and
@@ -113,11 +113,10 @@ function notifyUser(message, tone = 'green') {
   if (!visible && tone !== 'green' && Notification.isSupported()) new Notification({ title: 'Pitch', body: message }).show();
 }
 
-// Pitch updating itself from the GitHub Releases named in package.json (build.publish). Only a
+// Pitch updating itself from the GitHub Releases of this repo (build.publish in package.json). Only a
 // packaged build checks; `npm start` never touches it. PITCH_NO_SELF_UPDATE=1 turns it off.
 function createUpdater() {
-  const pub = [].concat((require('../../package.json').build || {}).publish || [])[0] || {};
-  const releasesUrl = pub.owner && pub.repo ? `https://github.com/${pub.owner}/${pub.repo}/releases/latest` : '';
+  const releasesUrl = releasesUrlFromPackage(require('../../package.json'));
   let autoUpdater = null;
   if (app.isPackaged && !process.env.PITCH_NO_SELF_UPDATE) {
     try {

@@ -3,7 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { EventEmitter } = require('node:events');
-const { Updater, friendlyError } = require('../src/main/updater');
+const { Updater, friendlyError, releasesUrlFromPackage } = require('../src/main/updater');
 
 function fakeAutoUpdater(onCheck) {
   const u = new EventEmitter();
@@ -104,4 +104,11 @@ test('does not start a second check while one is running or an update is ready',
 test('friendlyError turns network and missing-release failures into plain Spanish', () => {
   assert.match(friendlyError(new Error('net::ERR_INTERNET_DISCONNECTED')), /Sin conexión/);
   assert.match(friendlyError(new Error('Cannot find latest.yml in the latest release artifacts (HttpError: 404)')), /Releases/);
+});
+
+test('the download link comes from package.json "repository" and never ends up empty', () => {
+  assert.equal(releasesUrlFromPackage({ repository: { type: 'git', url: 'https://github.com/planeador4000-design/pitch.git' } }), 'https://github.com/planeador4000-design/pitch/releases/latest');
+  assert.equal(releasesUrlFromPackage({ repository: 'github:o/r' }), 'https://github.com/o/r/releases/latest');
+  assert.equal(releasesUrlFromPackage({}), 'https://github.com/planeador4000-design/pitch/releases/latest'); // the installed app has no "build" block either
+  assert.equal(releasesUrlFromPackage(require('../package.json')), 'https://github.com/planeador4000-design/pitch/releases/latest');
 });

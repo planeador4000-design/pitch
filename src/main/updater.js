@@ -113,6 +113,16 @@ class Updater extends EventEmitter {
   }
 }
 
+// Where to send people to download a new build by hand (unsigned macOS, .deb). It comes from the
+// top-level "repository" of package.json because electron-builder strips the "build" block from
+// the copy of package.json that ships inside the installed app.
+const DEFAULT_REPO = 'planeador4000-design/pitch';
+function releasesUrlFromPackage(pkg) {
+  const raw = pkg && pkg.repository ? (typeof pkg.repository === 'string' ? pkg.repository : pkg.repository.url) : '';
+  const m = String(raw || '').match(/(?:github\.com[/:]|^github:|^)([^/\s:]+)\/([^/\s]+?)(?:\.git)?\/?$/i);
+  return `https://github.com/${m ? `${m[1]}/${m[2]}` : DEFAULT_REPO}/releases/latest`;
+}
+
 function friendlyError(err) {
   const msg = String((err && err.message) || err || '');
   if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|ENETUNREACH|net::ERR/i.test(msg)) return 'Sin conexión con GitHub.';
@@ -121,4 +131,4 @@ function friendlyError(err) {
   return msg.split('\n')[0].slice(0, 200) || 'Error desconocido.';
 }
 
-module.exports = { Updater, friendlyError };
+module.exports = { Updater, friendlyError, releasesUrlFromPackage };
